@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="{{ site.lang | default: 'en' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% seo %}
+  {% feed_meta %}
+  <link rel="icon" href="{{ '/assets/favicon.svg' | relative_url }}" type="image/svg+xml">
+  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+</head>
+<body class="{{ page.body_class | default: 'page' }}">
+  <header>
+    <a class="title" href="{{ '/' | relative_url }}"><h1>{{ site.title }}</h1></a>
+    <nav aria-label="Main navigation">
+      <p>
+        <a href="{{ '/' | relative_url }}"{% if page.body_class == 'home' %} aria-current="page"{% endif %}>Home</a>
+        <a href="{{ '/blog/' | relative_url }}"{% if page.body_class == 'blog' or page.layout == 'post' %} aria-current="page"{% endif %}>Writing</a>
+      </p>
+    </nav>
+  </header>
+  <main>{{ content }}</main>
+</body>
+</html>

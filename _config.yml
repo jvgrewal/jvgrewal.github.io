@@ -1,0 +1,33 @@
+title: Joshveer Grewal
+description: "Notes on ML systems, interpretability, and parallel programming. Papers, projects, and questions from Joshveer Grewal."
+url: "https://jvgrewal.github.io"
+baseurl: ""
+lang: en
+timezone: America/Detroit
+author:
+  name: Joshveer Grewal
+markdown: kramdown
+highlighter: rouge
+permalink: /blog/:title/
+future: false
+show_drafts: false
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+  - jekyll-feed
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
+      body_class: post
+      author: Joshveer Grewal
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - vendor
+  - drafts
+  - scripts
+  - .bundle

@@ -1,0 +1,17 @@
+---
+layout: default
+title: Writing
+body_class: blog
+permalink: /blog/
+description: "Technical writing by Joshveer Grewal on ML systems, interpretability, parallel programming, and projects."
+---
+{% if site.posts.size > 0 %}
+<ul class="blog-posts">
+  {% for post in site.posts %}
+  <li>
+    <span><time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: '%b %-d, %Y' }}</time></span>
+    <a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}

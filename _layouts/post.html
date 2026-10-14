@@ -1,0 +1,9 @@
+---
+layout: default
+body_class: post
+---
+<h1>{{ page.title | escape }}</h1>
+<p class="post-meta"><time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: '%b %-d, %Y' }}</time></p>
+<article>{{ content }}</article>
+<hr>
+<p><a href="{{ '/blog/' | relative_url }}">Back to writing</a></p>
