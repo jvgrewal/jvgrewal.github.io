@@ -6,8 +6,8 @@
   <title>{% if page.title %}{{ page.title | escape }} · {% endif %}{{ site.title | escape }}</title>
   {% seo title=false %}
   {% feed_meta %}
-  <link id="site-favicon" rel="icon" href="{{ '/assets/favicon.svg' | relative_url }}?v=glider-wrapping" type="image/svg+xml">
-  <script src="{{ '/assets/js/favicon.js' | relative_url }}?v=wrap" defer></script>
+  <link id="site-favicon" rel="icon" href="{{ '/assets/favicon.svg' | relative_url }}?v=glider-centered" type="image/svg+xml">
+  <script src="{{ '/assets/js/favicon.js' | relative_url }}?v=centered" defer></script>
   <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
 </head>
 <body class="{{ page.body_class | default: 'page' }}">
