@@ -37,3 +37,5 @@ Markdown supports tables, fenced code blocks, links, images, and footnotes. Use 
 ## Deployment
 
 Publish from the `main` branch at the repository root in Settings → Pages. GitHub's supported Jekyll build handles the plugins configured in `_config.yml`. The repository contains no theme dependency, analytics, or custom server. A small standalone script animates the glider favicon through four actual Life generations at 500ms per step. It follows the glider to keep the pattern centered, pauses in hidden tabs, and uses the static SVG for reduced motion or when JavaScript is disabled. Browser tab-icon updates vary by browser.
+
+Home also loads `assets/js/home-life.js`, a subtle gray Game of Life canvas confined to the desktop side margins. Narrow screens use a small strip below the introduction; cramped layouts omit it. The canvas is decorative, ignores pointer input, and pauses for reduced motion or hidden tabs. Writing and post pages do not include this canvas or its script.
