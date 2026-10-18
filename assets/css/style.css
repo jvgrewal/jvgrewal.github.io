@@ -32,7 +32,6 @@ h1 { font: 500 24px/1.4 var(--sans); margin: 0 0 24px; }
 h2 { font: 500 20px/1.4 var(--sans); margin: 34px 0 14px; }
 h3 { font-size: 16px; font-weight: 500; margin: 26px 0 12px; }
 p { margin: 0 0 18px; }
-.home main { max-width: 590px; }
 .life-margins { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
 .home > header, .home > main { position: relative; z-index: 1; }
 ul.blog-posts { list-style: none; padding: 0; margin: 8px 0 28px; }

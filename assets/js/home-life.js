@@ -50,7 +50,7 @@
 
   function paint() {
     context.clearRect(0, 0, width, height);
-    context.fillStyle = '#d0d0d0';
+    context.fillStyle = '#b8b8b8';
     for (const board of boards) {
       const cellSize = board.pitch - 4;
       for (let y = 0; y < board.rows; y++) {
@@ -102,7 +102,7 @@
 
   function resize() {
     resizeFrame = null;
-    width = window.innerWidth;
+    width = document.documentElement.clientWidth || window.innerWidth;
     height = window.innerHeight;
     const scale = Math.min(window.devicePixelRatio || 1, 2);
     canvas.width = Math.round(width * scale);
@@ -110,11 +110,12 @@
     context.setTransform(scale, 0, 0, scale, 0, 0);
 
     const body = document.body.getBoundingClientRect();
-    const left = Math.max(0, Math.floor(body.left) - 32);
-    const right = Math.max(0, width - Math.ceil(body.right) - 32);
+    const sideWidth = Math.max(0, Math.floor(Math.min(body.left, width - body.right)) - 32);
     const zones = [];
-    if (left >= 84 && height >= 84) zones.push({x: 0, y: 0, width: left, height, pitch: 12});
-    if (right >= 84 && height >= 84) zones.push({x: width - right, y: 0, width: right, height, pitch: 12});
+    if (sideWidth >= 84 && height >= 84) {
+      zones.push({x: 0, y: 0, width: sideWidth, height, pitch: 12});
+      zones.push({x: width - sideWidth, y: 0, width: sideWidth, height, pitch: 12});
+    }
 
     // When there are no side margins, use a small band below the copy.
     if (!zones.length) {
