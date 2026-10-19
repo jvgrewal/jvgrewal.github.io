@@ -3,54 +3,62 @@
   const icon = document.getElementById('site-favicon');
   if (!icon) return;
 
-  const staticIcon = icon.href;
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const theme = window.matchMedia('(prefers-color-scheme: dark)');
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = 32;
+  const context = canvas.getContext('2d');
+  if (!context) return; // Keep the theme-aware SVG when canvas is unavailable.
   const phases = [
     [[1, 0], [2, 1], [0, 2], [1, 2], [2, 2]],
     [[0, 0], [2, 0], [1, 1], [2, 1], [1, 2]],
     [[2, 0], [0, 1], [2, 1], [1, 2], [2, 2]],
     [[0, 0], [1, 1], [2, 1], [0, 2], [1, 2]]
   ];
-  function makeFrames() {
-    const background = theme.matches ? '#000' : '#fff';
-    const foreground = theme.matches ? '#ddd' : '#222';
+  function makeFrames(dark) {
     return phases.map(cells => {
-      const pixels = cells.map(([x, y]) =>
-        `<rect x="${5 + x * 8}" y="${5 + y * 8}" width="6" height="6"/>`
-      ).join('');
-      const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" shape-rendering="crispEdges"><rect width="32" height="32" fill="${background}"/><g fill="${foreground}">${pixels}</g></svg>`;
-      return 'data:image/svg+xml,' + encodeURIComponent(svg);
+      context.fillStyle = dark ? '#000' : '#fff';
+      context.fillRect(0, 0, 32, 32);
+      context.fillStyle = dark ? '#ddd' : '#222';
+      for (const [x, y] of cells) {
+        context.fillRect(5 + x * 8, 5 + y * 8, 6, 6);
+      }
+      return canvas.toDataURL('image/png');
     });
   }
-  let frames = makeFrames();
+  const frames = {light: makeFrames(false), dark: makeFrames(true)};
+  icon.type = 'image/png';
+  icon.sizes = '32x32';
 
   let timer = null;
   let phase = 0;
+  function paint() {
+    icon.href = frames[theme.matches ? 'dark' : 'light'][phase];
+  }
   function updateAnimation() {
     if (timer !== null) clearInterval(timer);
     timer = null;
     phase = 0;
-    icon.href = staticIcon;
+    // A paused tab still needs the right colors, without relying on SVG caching.
+    paint();
     if (document.hidden || reducedMotion.matches) return;
 
-    icon.href = frames[0];
     timer = setInterval(() => {
-      phase = (phase + 1) % frames.length;
-      icon.href = frames[phase];
+      phase = (phase + 1) % phases.length;
+      paint();
     }, 500);
   }
 
   document.addEventListener('visibilitychange', updateAnimation);
   reducedMotion.addEventListener('change', updateAnimation);
-  theme.addEventListener('change', () => {
-    frames = makeFrames();
-    updateAnimation();
-  });
+  theme.addEventListener('change', updateAnimation);
   window.addEventListener('pagehide', () => {
     if (timer !== null) clearInterval(timer);
     timer = null;
+    phase = 0;
+    paint();
   });
   window.addEventListener('pageshow', updateAnimation);
+  window.addEventListener('focus', updateAnimation);
   updateAnimation();
 })();
