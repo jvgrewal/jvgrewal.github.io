@@ -1,6 +1,6 @@
 # Joshveer Grewal's research blog
 
-Minimal Home and Writing site for https://jvgrewal.github.io, built with GitHub Pages and Jekyll.
+Minimal Home and Writing site for https://joshveergrewal.com, built with GitHub Pages and Jekyll.
 
 ## Content
 
