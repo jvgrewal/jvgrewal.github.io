@@ -102,8 +102,9 @@
 
   function resize() {
     resizeFrame = null;
-    width = document.documentElement.clientWidth || window.innerWidth;
-    height = window.innerHeight;
+    const compact = window.matchMedia('(max-width: 900px)').matches;
+    width = compact ? canvas.clientWidth : document.documentElement.clientWidth || window.innerWidth;
+    height = compact ? canvas.clientHeight : window.innerHeight;
     const scale = Math.min(window.devicePixelRatio || 1, 2);
     canvas.width = Math.round(width * scale);
     canvas.height = Math.round(height * scale);
@@ -112,19 +113,14 @@
     const body = document.body.getBoundingClientRect();
     const sideWidth = Math.max(0, Math.floor(Math.min(body.left, width - body.right)) - 32);
     const zones = [];
-    if (sideWidth >= 84 && height >= 84) {
+    if (!compact && sideWidth >= 84 && height >= 84) {
       zones.push({x: 0, y: 0, width: sideWidth, height, pitch: 12});
       zones.push({x: width - sideWidth, y: 0, width: sideWidth, height, pitch: 12});
     }
 
-    // When there are no side margins, use a small band below the copy.
-    if (!zones.length) {
-      const main = document.querySelector('main').getBoundingClientRect();
-      const top = Math.max(Math.ceil(main.bottom) + 72, height - 144);
-      const available = height - top - 16;
-      if (width >= 220 && available >= 64) {
-        zones.push({x: 24, y: top, width: width - 48, height: Math.min(128, available), pitch: 8});
-      }
+    // On mobile, CSS places the canvas in the page flow below the copy.
+    if (compact && width >= 172 && height >= 64) {
+      zones.push({x: 0, y: 0, width, height, pitch: 8});
     }
     boards = zones.map(createBoard);
     generation = 0;

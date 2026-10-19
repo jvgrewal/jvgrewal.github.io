@@ -8,15 +8,12 @@
   {% feed_meta %}
   <link id="site-favicon" rel="icon" href="{{ '/assets/favicon.svg' | relative_url }}?v=glider-centered" type="image/svg+xml">
   <script src="{{ '/assets/js/favicon.js' | relative_url }}?v=centered" defer></script>
-  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}?v=home-life-balanced">
+  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}?v=mobile-life-bottom">
   {% if page.body_class == 'home' %}
-  <script src="{{ '/assets/js/home-life.js' | relative_url }}?v=balanced" defer></script>
+  <script src="{{ '/assets/js/home-life.js' | relative_url }}?v=mobile-bottom" defer></script>
   {% endif %}
 </head>
 <body class="{{ page.body_class | default: 'page' }}">
-  {% if page.body_class == 'home' %}
-  <canvas id="life-margins" class="life-margins" aria-hidden="true"></canvas>
-  {% endif %}
   <header>
     <a class="title" href="{{ '/' | relative_url }}"><h1>{{ site.title }}</h1></a>
     <nav aria-label="Main navigation">
@@ -27,5 +24,8 @@
     </nav>
   </header>
   <main>{{ content }}</main>
+  {% if page.body_class == 'home' %}
+  <canvas id="life-margins" class="life-margins" aria-hidden="true"></canvas>
+  {% endif %}
 </body>
 </html>

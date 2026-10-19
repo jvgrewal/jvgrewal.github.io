@@ -68,6 +68,14 @@ body > footer { margin-top: 60px; font-size: 11px; color: var(--muted); }
 footer a { color: var(--muted); text-decoration: none; }
 .tags { font-size: 12px; }
 ::selection { background: #e6e6e6; color: #222222; }
+@media (max-width: 900px) {
+  body.home { display: flex; flex-direction: column; min-height: 100svh; }
+  .home > main { margin-bottom: 72px; }
+  .home .life-margins {
+    position: relative; inset: auto; width: 100%; height: 128px;
+    flex: 0 0 128px; margin-top: auto;
+  }
+}
 @media (max-width: 600px) {
   body { padding: 30px 24px 22px; }
   nav p { gap: 18px; }
