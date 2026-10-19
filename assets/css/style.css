@@ -1,13 +1,27 @@
 /* Minimal Home + Writing theme for Joshveer Grewal's research blog. */
 :root {
-  color-scheme: light;
+  color-scheme: light dark;
   --paper: #ffffff;
   --ink: #222222;
   --muted: #666666;
   --line: #e5e5e5;
   --accent: #222222;
   --wash: #f7f7f7;
+  --life: #b8b8b8;
+  --selection: #e6e6e6;
   --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #000000;
+    --ink: #dddddd;
+    --muted: #999999;
+    --line: #1a1a1a;
+    --accent: #dddddd;
+    --wash: #080808;
+    --life: #474747;
+    --selection: #191919;
+  }
 }
 * { box-sizing: border-box; }
 html { scroll-padding-top: 2rem; background: var(--paper); }
@@ -67,7 +81,7 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 30px 0; }
 body > footer { margin-top: 60px; font-size: 11px; color: var(--muted); }
 footer a { color: var(--muted); text-decoration: none; }
 .tags { font-size: 12px; }
-::selection { background: #e6e6e6; color: #222222; }
+::selection { background: var(--selection); color: var(--ink); }
 @media (max-width: 900px) {
   body.home { display: flex; flex-direction: column; min-height: 100svh; }
   .home > main { margin-bottom: 72px; }
@@ -86,7 +100,7 @@ footer a { color: var(--muted); text-decoration: none; }
   ul.blog-posts li > p, ul.blog-posts li > div { padding-left: 0; }
 }
 @media print {
-  :root { --paper: white; --ink: black; --muted: #444; --line: #ddd; --accent: black; --wash: #f5f5f5; }
+  :root { color-scheme: light; --paper: white; --ink: black; --muted: #444; --line: #ddd; --accent: black; --wash: #f5f5f5; }
   body { max-width: none; padding: 0; font-size: 12pt; }
   nav, .preview-banner, .life-margins { display: none; }
   pre { white-space: pre-wrap; }

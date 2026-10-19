@@ -5,19 +5,25 @@
 
   const staticIcon = icon.href;
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const theme = window.matchMedia('(prefers-color-scheme: dark)');
   const phases = [
     [[1, 0], [2, 1], [0, 2], [1, 2], [2, 2]],
     [[0, 0], [2, 0], [1, 1], [2, 1], [1, 2]],
     [[2, 0], [0, 1], [2, 1], [1, 2], [2, 2]],
     [[0, 0], [1, 1], [2, 1], [0, 2], [1, 2]]
   ];
-  const frames = phases.map(cells => {
-    const pixels = cells.map(([x, y]) =>
-      `<rect x="${5 + x * 8}" y="${5 + y * 8}" width="6" height="6"/>`
-    ).join('');
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" shape-rendering="crispEdges"><rect width="32" height="32" fill="#fff"/><g fill="#222">${pixels}</g></svg>`;
-    return 'data:image/svg+xml,' + encodeURIComponent(svg);
-  });
+  function makeFrames() {
+    const background = theme.matches ? '#000' : '#fff';
+    const foreground = theme.matches ? '#ddd' : '#222';
+    return phases.map(cells => {
+      const pixels = cells.map(([x, y]) =>
+        `<rect x="${5 + x * 8}" y="${5 + y * 8}" width="6" height="6"/>`
+      ).join('');
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" shape-rendering="crispEdges"><rect width="32" height="32" fill="${background}"/><g fill="${foreground}">${pixels}</g></svg>`;
+      return 'data:image/svg+xml,' + encodeURIComponent(svg);
+    });
+  }
+  let frames = makeFrames();
 
   let timer = null;
   let phase = 0;
@@ -37,6 +43,10 @@
 
   document.addEventListener('visibilitychange', updateAnimation);
   reducedMotion.addEventListener('change', updateAnimation);
+  theme.addEventListener('change', () => {
+    frames = makeFrames();
+    updateAnimation();
+  });
   window.addEventListener('pagehide', () => {
     if (timer !== null) clearInterval(timer);
     timer = null;

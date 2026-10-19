@@ -3,14 +3,17 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
   <title>{% if page.title %}{{ page.title | escape }} · {% endif %}{{ site.title | escape }}</title>
   {% seo title=false %}
   {% feed_meta %}
-  <link id="site-favicon" rel="icon" href="{{ '/assets/favicon.svg' | relative_url }}?v=glider-centered" type="image/svg+xml">
-  <script src="{{ '/assets/js/favicon.js' | relative_url }}?v=centered" defer></script>
-  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}?v=mobile-life-bottom">
+  <link id="site-favicon" rel="icon" href="{{ '/assets/favicon.svg' | relative_url }}?v=system-theme" type="image/svg+xml">
+  <script src="{{ '/assets/js/favicon.js' | relative_url }}?v=system-theme" defer></script>
+  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}?v=system-theme">
   {% if page.body_class == 'home' %}
-  <script src="{{ '/assets/js/home-life.js' | relative_url }}?v=mobile-bottom" defer></script>
+  <script src="{{ '/assets/js/home-life.js' | relative_url }}?v=system-theme" defer></script>
   {% endif %}
 </head>
 <body class="{{ page.body_class | default: 'page' }}">

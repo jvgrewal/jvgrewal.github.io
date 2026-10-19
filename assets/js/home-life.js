@@ -6,6 +6,7 @@
   if (!context) return;
 
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const theme = window.matchMedia('(prefers-color-scheme: dark)');
   const patterns = [
     [[1, 0], [2, 1], [0, 2], [1, 2], [2, 2]],
     [[1, 0], [2, 0], [0, 1], [1, 1], [1, 2]],
@@ -50,7 +51,7 @@
 
   function paint() {
     context.clearRect(0, 0, width, height);
-    context.fillStyle = '#b8b8b8';
+    context.fillStyle = getComputedStyle(canvas).getPropertyValue('--life').trim() || '#b8b8b8';
     for (const board of boards) {
       const cellSize = board.pitch - 4;
       for (let y = 0; y < board.rows; y++) {
@@ -134,6 +135,7 @@
   });
   document.addEventListener('visibilitychange', synchronize);
   motion.addEventListener('change', synchronize);
+  theme.addEventListener('change', paint);
   window.addEventListener('pagehide', () => {
     if (timer !== null) clearInterval(timer);
     timer = null;

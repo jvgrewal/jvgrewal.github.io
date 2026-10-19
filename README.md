@@ -8,7 +8,7 @@ Minimal Home and Writing site for https://joshveergrewal.com, built with GitHub 
 - `blog/index.html`: writing archive; blank until a real post is published.
 - `_posts/YYYY-MM-DD-slug.md`: published Markdown posts.
 - `_layouts/`: shared page and article layouts.
-- `assets/css/style.css`: white background, system font, and technical article styles.
+- `assets/css/style.css`: system light/dark colors, system font, and technical article styles.
 - `assets/<post-slug>/`: public figures and files referenced by published posts.
 
 Keep working drafts and source notes in the private local workspace outside this repository. This repository is public.
@@ -39,3 +39,7 @@ Markdown supports tables, fenced code blocks, links, images, and footnotes. Use 
 Publish from the `main` branch at the repository root in Settings → Pages. GitHub's supported Jekyll build handles the plugins configured in `_config.yml`. The repository contains no theme dependency, analytics, or custom server. A small standalone script animates the glider favicon through four actual Life generations at 500ms per step. It follows the glider to keep the pattern centered, pauses in hidden tabs, and uses the static SVG for reduced motion or when JavaScript is disabled. Browser tab-icon updates vary by browser.
 
 Home also loads `assets/js/home-life.js`, a subtle gray (`#b8b8b8`) Game of Life canvas confined to equal-width desktop side margins around a centered reading column. At widths up to 900px, the animation sits in a 128px band at the bottom of the page, below the introduction. It stays in normal document flow so short and landscape screens scroll without overlapping the copy. The canvas is decorative, ignores pointer input, and pauses for reduced motion or hidden tabs. Writing and post pages do not include this canvas or its script.
+
+## Automatic appearance
+
+The site follows the device’s `prefers-color-scheme` setting, with white paper and dark text in light mode and inverted colors in dark mode. CSS controls all page colors; the homepage canvas repaints immediately on a theme change. Both the animated glider favicon and its static SVG fallback use matching inverted colors. Animation timing, centered glider motion, reduced-motion support, and hidden-tab pauses are preserved. Printing uses a light background.
