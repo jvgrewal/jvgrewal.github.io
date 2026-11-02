@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="600" viewBox="0 0 640 600" role="img" aria-labelledby="title"><title id="title">A dependency graph separates cached computation from iteration-varying work</title>
+<style>
+        :root{color-scheme:light dark;--bg:#fff;--fg:#222;--muted:#666;--line:#999;--wash:#f7f7f7}
+        @media(prefers-color-scheme:dark){:root{--bg:#000;--fg:#ddd;--muted:#999;--line:#777;--wash:#111}}
+        @media print{:root{--bg:#fff;--fg:#222;--muted:#666;--line:#999;--wash:#f7f7f7}}
+        .bg{fill:var(--bg)} .box{fill:var(--wash);stroke:var(--line);stroke-width:1.2}
+        text{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;fill:var(--fg);font-size:15px}
+        .label{font-size:12px;fill:var(--muted)} .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px}
+        .edge{fill:none;stroke:var(--fg);stroke-width:1.5;marker-end:url(#arrow)}
+        .dash{stroke-dasharray:5 4} .bar{fill:var(--fg)} .pale{fill:var(--wash);stroke:var(--line)}
+        </style><defs><marker id="arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 L7 3.5 L0 7" fill="var(--fg)"/></marker></defs>
+<rect class="bg" width="640" height="600"/>
+<rect class="box" x="230" y="48" width="180" height="48" rx="3"/>
+<text x="320.0" y="77.0" class="mono" text-anchor="middle">j = load index</text>
+<rect class="box" x="40" y="135" width="245" height="52" rx="3"/>
+<text x="162.5" y="166.0" class="mono" text-anchor="middle">C[j]</text>
+<rect class="box" x="355" y="135" width="245" height="52" rx="3"/>
+<text x="477.5" y="166.0" class="mono" text-anchor="middle">A[j]</text>
+<rect class="box" x="40" y="225" width="245" height="65" rx="3"/>
+<text x="162.5" y="252.0" class="mono" text-anchor="middle">fmuladd, then / 27.5</text>
+<text x="162.5" y="273.0" class="mono" text-anchor="middle">t = result</text>
+<rect class="box" x="40" y="325" width="245" height="65" rx="3"/>
+<text x="162.5" y="352.0" class="mono" text-anchor="middle">t * (t / 93)</text>
+<text x="162.5" y="373.0" class="mono" text-anchor="middle">then * 2.90583</text>
+<rect class="box" x="355" y="325" width="245" height="65" rx="3"/>
+<text x="477.5" y="352.0" class="mono" text-anchor="middle">28.9723 * A[j]</text>
+<text x="477.5" y="373.0" class="mono" text-anchor="middle">then / 3.673</text>
+<rect class="box" x="125" y="435" width="390" height="60" rx="3"/>
+<text x="320.0" y="459.5" class="mono" text-anchor="middle">combine both paths</text>
+<text x="320.0" y="480.5" class="mono" text-anchor="middle">cached final expression</text>
+<rect class="box" x="125" y="540" width="390" height="45" rx="3"/>
+<text x="320.0" y="567.5" class="mono" text-anchor="middle">B[i % 1000] = cached + i</text>
+<path class="edge" d="M265 96 V113 H163 V135"/>
+<path class="edge" d="M375 96 V113 H478 V135"/>
+<path class="edge" d="M163 187 V225"/>
+<path class="edge" d="M163 290 V325"/>
+<path class="edge" d="M478 187 V325"/>
+<path class="edge" d="M163 390 V410 H245 V435"/>
+<path class="edge" d="M478 390 V410 H395 V435"/>
+<path class="edge" d="M320 495 V540"/>
+<text x="39" y="510" class="label" text-anchor="start">Only boundary values</text>
+<text x="39" y="528" class="label" text-anchor="start">need loop-carried SSA state.</text>
+<text x="555" y="558" class="label" text-anchor="middle">i varies</text>
+<path class="edge" d="M550 562 H516"/></svg>
