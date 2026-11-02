@@ -2,6 +2,7 @@
 layout: post
 title: "Frequent Path Loop Invariant Code Motion"
 date: 2026-11-01 19:25:35 -0500
+last_modified_at: 2026-11-01 22:37:11 -0500
 description: "Implementing frequent path loop invariant code motion in LLVM, fixing a slowdown, and learning to inspect the generated loop."
 tags: [compilers, llvm, optimization, systems]
 published: true
@@ -9,7 +10,7 @@ published: true
 
 I recently (by recently, I mean about two weeks ago—midterms are finally done) implemented **frequent path loop invariant code motion** (FPLICM) in LLVM for my grad compiler class (EECS 583).
 
-I started by hoisting loads, then extended the pass to the computation depending on them, assuming that removing the repeated work would make the program faster.
+I started by moving loads out of loops, then tried moving the calculations that used them. I assumed that doing less work inside the loop would make the program faster.
 
 Even though the output still matched, an early run of the first benchmark went from 2.32 seconds to 3.95 seconds of user CPU time.
 
@@ -87,7 +88,7 @@ The use must receive 5 even if memory now contains 9. Rewriting each use to the 
 
 *The repaired 9 is available to a later load execution; the earlier snapshot stays 5.*
 
-I queried `GetValueInMiddleOfBlock` at the original load's block, substituted that result for all its uses, and deleted the load. The [SSAUpdater interface](https://llvm.org/doxygen/classllvm_1_1SSAUpdater.html) distinguishes this from querying the value at the end of a block.
+So I asked `SSAUpdater` for the value at the original load's block, using `GetValueInMiddleOfBlock`. That one value replaced all uses of the old load, which I could then delete. The [SSAUpdater interface](https://llvm.org/doxygen/classllvm_1_1SSAUpdater.html) explains how this differs from asking for the value at the end of a block.
 
 ## Moving the rest of the expression
 
@@ -118,7 +119,7 @@ Hoisting can execute a load the original program never reached. If `j` is out of
 
 *Neither invalid index was dereferenced in the original execution.*
 
-I restricted the array accesses the pass accepts and added guards so extra evaluations wouldn't use an out-of-range index or an invalid integer divisor. The important constraint is that an evaluation whose result the original program needs must still produce that result. Substituting a safe index is only acceptable when the speculative result won't be used.
+I restricted the array accesses the pass accepts and added guards so extra evaluations wouldn't use an out-of-range index or an invalid integer divisor. The guards couldn't change any result the original program actually used. A substitute index was only safe when that extra result would go unused.
 
 An additional test covered both a zero-trip loop and an invalid index introduced by a final update. Its output matched after the full pipeline. These checks work within the pass's restricted memory model; they aren't general support for speculating arbitrary loads.
 
@@ -137,7 +138,7 @@ str d0, [sp, #40]    ; spill it to another slot
 ldr d0, [sp, #40]    ; reload for the computation that remains
 ```
 
-Those transfers put a dependency on the repeated path. The inserted bounds and division guards ran in the preheader and cold repair blocks. This pointed me toward how the CFG carried the cached value.
+The loop was still moving the cached result between stack slots on every iteration. The bounds and division guards were in the preheader and cold repair blocks, so I focused on those repeated transfers.
 
 ## Duplicating the latch
 
@@ -155,13 +156,13 @@ The frequent-path copy uses the existing cached result, and the repair-path copy
 
 Adding this step after cleanup and rotation took benchmark one from **2.34 seconds to 1.03 seconds** in an isolated comparison. These were individual timings, but it was the largest improvement I saw.
 
-I limited duplication to small latches without memory operations or side effects, and checked that values leaving the block could be remapped safely. Only the increment-and-test work gets duplicated; the repair computation stays put.
+I only duplicated small latches without memory operations or side effects, and checked that values leaving the block could be remapped safely. The repair computation stayed where it was; each iteration ran just one copy of the increment-and-test work.
 
 ## Some chains were better left alone
 
 The integer-heavy chains had regressed locally, so I added a filter requiring at least two expensive operations: floating-point divisions or integer divisions with nonconstant divisors. Remainders and constant-divisor integer divisions don't count toward the threshold.
 
-It's a coarse heuristic that doesn't account for the target processor or the full cost of repair. In this suite, it accepts the floating-point workloads and rejects the integer ones. When nothing is hoisted in a function, performance mode returns without running cleanup.
+This rule doesn't account for the target processor or the full cost of repair. For these benchmarks, it selects the floating-point workloads and leaves the integer ones alone. When nothing is hoisted in a function, performance mode returns without running cleanup.
 
 ## Results
 
@@ -181,6 +182,7 @@ The four performance benchmarks and the extra edge-case test also matched output
 | `hw2perf2` | 3.07 (3.07–3.13) | 2.79 (2.78–2.80) | 1.60 (1.58–1.66) | 1.92× |
 | `hw2perf3` · pass skipped | 2.00 (1.98–2.00) | 2.39 (2.38–2.41) | 1.98 (1.98–1.98) | 1.01×* |
 | `hw2perf4` · pass skipped | 2.64 (2.37–2.65) | 2.67 (2.53–2.76) | 2.36 (2.17–2.47) | 1.12×* |
+{: .benchmark-results}
 
 *Ratios for skipped workloads are observed timing ratios, not attributed speedups. Values are median (minimum–maximum), three trials per executable.*
 
@@ -188,6 +190,6 @@ The four performance benchmarks and the extra edge-case test also matched output
 
 *Bars show medians; whiskers span the three trials. Lower is better. The speculative pass skips benchmarks three and four.*
 
-Timings are **user CPU seconds**, with three trials per executable and the order rotated between trials. The cleanup-only control runs LLVM's standard cleanup passes without my hoisting or latch duplication. The full pipeline is faster on benchmarks one and two, though this comparison doesn't separate the contributions of my individual changes.
+Timings are **user CPU seconds**, with three trials per executable and the order rotated between trials. The cleanup-only control runs LLVM's standard cleanup passes without my hoisting or latch duplication. My full pass was faster than cleanup alone on the first two benchmarks. That gives me evidence that the custom transformations helped, but it doesn't tell me how much each one contributed.
 
 Benchmarks three and four retain the profiled IR apart from the module identifier. For benchmark four, the baseline and transformed inputs even compile to identical assembly. Its apparent improvement in the table can't be credited to my transformation.
