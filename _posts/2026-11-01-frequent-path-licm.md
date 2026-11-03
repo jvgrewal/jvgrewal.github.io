@@ -2,13 +2,13 @@
 layout: post
 title: "Frequent Path Loop Invariant Code Motion"
 date: 2026-11-01 19:25:35 -0500
-last_modified_at: 2026-11-01 22:37:11 -0500
+last_modified_at: 2026-11-03 10:50:30 -0500
 description: "Implementing frequent path loop invariant code motion in LLVM, fixing a slowdown, and learning to inspect the generated loop."
 tags: [compilers, llvm, optimization, systems]
 published: true
 ---
 
-I recently (by recently, I mean about two weeks ago—midterms are finally done) implemented **frequent path loop invariant code motion** (FPLICM) in LLVM for my grad compiler class (EECS 583).
+I recently (by recently, I mean about two weeks ago—midterms are finally done) implemented **frequent path loop invariant code motion** (FPLICM) in LLVM for my grad compiler class (CSE 583).
 
 I started by moving loads out of loops, then tried moving the calculations that used them. I assumed that doing less work inside the loop would make the program faster.
 
