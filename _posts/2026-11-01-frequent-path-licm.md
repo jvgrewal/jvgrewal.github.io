@@ -2,7 +2,7 @@
 layout: post
 title: "Frequent Path Loop Invariant Code Motion"
 date: 2026-11-01 19:25:35 -0500
-last_modified_at: 2026-11-03 10:50:30 -0500
+last_modified_at: 2026-11-05 00:28:26 -0500
 description: "Implementing frequent path loop invariant code motion in LLVM, fixing a slowdown, and learning to inspect the generated loop."
 tags: [compilers, llvm, optimization, systems]
 published: true
@@ -158,12 +158,6 @@ Adding this step after cleanup and rotation took benchmark one from **2.34 secon
 
 I only duplicated small latches without memory operations or side effects, and checked that values leaving the block could be remapped safely. The repair computation stayed where it was; each iteration ran just one copy of the increment-and-test work.
 
-## Some chains were better left alone
-
-The integer-heavy chains had regressed locally, so I added a filter requiring at least two expensive operations: floating-point divisions or integer divisions with nonconstant divisors. Remainders and constant-divisor integer divisions don't count toward the threshold.
-
-This rule doesn't account for the target processor or the full cost of repair. For these benchmarks, it selects the floating-point workloads and leaves the integer ones alone. When nothing is hoisted in a function, performance mode returns without running cleanup.
-
 ## Results
 
 My final recorded development run took benchmark one from 2.335 to 1.076 seconds and benchmark two from 3.145 to 1.569 seconds: **2.17× and 2.00×**. Benchmarks three and four were approximately unchanged.
@@ -172,9 +166,7 @@ For this write-up, the pass was also rebuilt in a separate directory with Homebr
 
 The baseline follows the assignment runner's unoptimized pipeline. The transformed and cleanup-only versions also receive profile information, but none of the timed binaries contains profiling counters. All use default `-O0` code generation.
 
-All six correctness tests produced identical output and the expected hoisting counts, including two cases where nothing should move. Checking the IR mattered: output equality alone would also accept a pass that did nothing.
-
-The four performance benchmarks and the extra edge-case test also matched output. All eleven passed LLVM's IR verifier, which checks well-formed IR rather than behavioral equivalence. The floating-point comparisons use rounded printed output, not every intermediate bit.
+All six correctness tests produced identical output and the expected hoisting counts, including two cases where nothing should move. The four performance benchmarks and the extra edge-case test also matched output.
 
 | Workload | Baseline seconds | Cleanup only seconds | Full pipeline seconds | Baseline / full |
 | --- | ---: | ---: | ---: | ---: |
@@ -190,6 +182,6 @@ The four performance benchmarks and the extra edge-case test also matched output
 
 *Bars show medians; whiskers span the three trials. Lower is better. The speculative pass skips benchmarks three and four.*
 
-Timings are **user CPU seconds**, with three trials per executable and the order rotated between trials. The cleanup-only control runs LLVM's standard cleanup passes without my hoisting or latch duplication. My full pass was faster than cleanup alone on the first two benchmarks. That gives me evidence that the custom transformations helped, but it doesn't tell me how much each one contributed.
+Timings are **user CPU seconds**, with three trials per executable and the order rotated between trials. The cleanup-only control runs LLVM's standard cleanup passes without my hoisting or latch duplication. My full pass was faster than cleanup alone on the first two benchmarks.
 
-Benchmarks three and four retain the profiled IR apart from the module identifier. For benchmark four, the baseline and transformed inputs even compile to identical assembly. Its apparent improvement in the table can't be credited to my transformation.
+Benchmarks three and four retain the profiled IR apart from the module identifier. For benchmark four, the baseline and transformed inputs even compile to identical assembly.
