@@ -2,7 +2,7 @@
 layout: post
 title: "Frequent Path Loop Invariant Code Motion"
 date: 2026-11-01 19:25:35 -0500
-last_modified_at: 2026-11-05 00:28:26 -0500
+last_modified_at: 2026-11-05 00:33:40 -0500
 description: "Implementing frequent path loop invariant code motion in LLVM, fixing a slowdown, and learning to inspect the generated loop."
 tags: [compilers, llvm, optimization, systems]
 published: true
@@ -125,7 +125,7 @@ An additional test covered both a zero-trip loop and an invalid index introduced
 
 ## What the assembly showed
 
-This was the version that regressed. I'd expected moving the whole chain to be a win, but the runner uses default `-O0` code generation. Lowering PHIs can introduce edge copies, spills, and reloads.
+Moving the whole calculation out of the loop still hadn't made it faster. The runner uses default `-O0` code generation, which can turn PHIs into copies, spills, and reloads.
 
 In the assembly, the cached result was being transferred through the header and shared latch even when it hadn't changed. Here's an excerpt from the saved early version, with unrelated instructions omitted:
 
@@ -160,13 +160,15 @@ I only duplicated small latches without memory operations or side effects, and c
 
 ## Results
 
-My final recorded development run took benchmark one from 2.335 to 1.076 seconds and benchmark two from 3.145 to 1.569 seconds: **2.17× and 2.00×**. Benchmarks three and four were approximately unchanged.
+All six correctness tests produced identical output and the expected hoisting counts, including two cases where nothing should move. The four performance benchmarks and the extra edge-case test also matched output.
 
-For this write-up, the pass was also rebuilt in a separate directory with Homebrew LLVM **22.1.8** on an **Apple M5**. The reproduction uses the full-sized supplied benchmarks, repeated trials, and a cleanup-only control.
+In my final development run, benchmark one went from 2.335 to 1.076 seconds and benchmark two from 3.145 to 1.569 seconds: **2.17× and 2.00×**. Benchmarks three and four were approximately unchanged.
+
+The table below comes from a separate reproduction using Homebrew LLVM **22.1.8** on an **Apple M5**, with the full-sized supplied benchmarks.
 
 The baseline follows the assignment runner's unoptimized pipeline. The transformed and cleanup-only versions also receive profile information, but none of the timed binaries contains profiling counters. All use default `-O0` code generation.
 
-All six correctness tests produced identical output and the expected hoisting counts, including two cases where nothing should move. The four performance benchmarks and the extra edge-case test also matched output.
+Timings are **user CPU seconds**, with three trials per executable and the order rotated between trials. The cleanup-only control runs LLVM's standard cleanup passes without my hoisting or latch duplication.
 
 | Workload | Baseline seconds | Cleanup only seconds | Full pipeline seconds | Baseline / full |
 | --- | ---: | ---: | ---: | ---: |
@@ -182,6 +184,6 @@ All six correctness tests produced identical output and the expected hoisting co
 
 *Bars show medians; whiskers span the three trials. Lower is better. The speculative pass skips benchmarks three and four.*
 
-Timings are **user CPU seconds**, with three trials per executable and the order rotated between trials. The cleanup-only control runs LLVM's standard cleanup passes without my hoisting or latch duplication. My full pass was faster than cleanup alone on the first two benchmarks.
+My full pass was faster than cleanup alone on the first two benchmarks.
 
-Benchmarks three and four retain the profiled IR apart from the module identifier. For benchmark four, the baseline and transformed inputs even compile to identical assembly.
+The pass left the instructions in benchmarks three and four unchanged. For benchmark four, the baseline and transformed versions even compiled to identical assembly.
