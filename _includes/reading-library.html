@@ -1,0 +1,38 @@
+{% assign chronological_papers = site.reading | sort: 'date' | reverse %}
+{% assign ordered_papers = site.reading | where_exp: 'paper', 'paper.shelf_order != nil' | sort: 'shelf_order' %}
+{% assign remaining_papers = chronological_papers | where_exp: 'paper', 'paper.shelf_order == nil' %}
+{% assign reading_papers = ordered_papers | concat: remaining_papers %}
+{% if reading_papers.size > 0 %}
+{% assign selected_paper = include.selected | default: reading_papers.first.url %}
+<div class="reading-library" data-reading-library data-site-title="{{ site.title | escape }}">
+  <div class="paper-window">
+  <div class="paper-shelf" aria-label="Research papers">
+    <div class="paper-row" data-paper-row>
+    {% for paper in reading_papers %}
+    <a class="paper-link{% if paper.url == selected_paper %} is-selected{% endif %}"
+       href="{{ paper.url | relative_url }}" data-paper-link data-note="paper-{{ paper.slug }}"
+       data-title="{{ paper.title | escape }}" data-description="{{ paper.description | escape }}" aria-controls="paper-{{ paper.slug }}"
+       {% if paper.url == selected_paper %}aria-current="true"{% endif %}>
+      <span class="paper-slot">
+      <span class="paper-object">
+        {% if paper.thumbnail %}<img src="{{ paper.thumbnail | relative_url }}" alt="First page of {{ paper.title | escape }}" width="360" height="466" decoding="async">
+        {% else %}<span class="paper-placeholder"><span>{{ paper.cover_title | default: paper.title | escape }}</span></span>{% endif %}
+      </span>
+      </span>
+    </a>
+    {% endfor %}
+    </div>
+  </div>
+  </div>
+  <div class="paper-position" data-paper-position aria-hidden="true"><span class="paper-position-marker"></span></div>
+  <span class="visually-hidden" aria-live="polite" data-reading-status></span>
+  <div class="paper-notes">
+    {% for paper in reading_papers %}
+    <section class="paper-note{% if paper.url == selected_paper %} is-selected{% endif %}" id="paper-{{ paper.slug }}" data-paper-panel{% unless paper.url == selected_paper %} hidden{% endunless %} aria-labelledby="title-{{ paper.slug }}">
+      <h1 id="title-{{ paper.slug }}"><a href="{{ paper.paper_url | escape }}">{{ paper.title | escape }}&nbsp;<span class="paper-external-arrow" aria-hidden="true">↗</span></a></h1>
+      <article>{{ paper.content | markdownify }}</article>
+    </section>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}

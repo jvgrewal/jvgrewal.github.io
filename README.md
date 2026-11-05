@@ -43,3 +43,21 @@ Home also loads `assets/js/home-life.js`, a subtle gray (`#b8b8b8`) Game of Life
 ## Automatic appearance
 
 The site follows the device’s `prefers-color-scheme` setting, with white paper and dark text in light mode and inverted colors in dark mode. CSS controls all page colors; the homepage canvas repaints immediately on a theme change. The glider favicon uses crisp 32px PNG frames with explicit light/dark colors, including when animation is paused. It refreshes on appearance changes, visibility, focus, and page restoration. Its static SVG fallback also follows system appearance. Animation timing, centered glider motion, reduced-motion support, and hidden-tab pauses are preserved. Printing uses a light background.
+
+## Reading
+
+`reading/index.html` and the `_reading/` collection provide the paper shelf and individual notes. Each note has a normal `/reading/<slug>/` URL. The shelf enhances those links with selection, browser history, keyboard navigation, and a reduced-motion version. Paper notes can use a first-page thumbnail or a simple title-sheet fallback.
+
+Start drafts outside the public checkout with `templates/reading-note.md`. Only move an approved note and its public thumbnail into `_reading/` and `assets/<paper-slug>/` when publication is authorized.
+
+The first version has no inline cross-links between notes/posts, no Linked from section, and no Related papers section. Each note’s main title links directly to the original paper. The interface has no small numbered captions, author/year/category row, or separate source-link row. Revisit cross-links with Joshveer when working on a Reading note or paper-related Writing post.
+
+The initial shelf contains FlashAttention, Attention Is All You Need, and the original Vision Transformer paper. Their note bodies and descriptions are deliberately blank. Only the approved entries and first-page thumbnails are public; private drafts, original PDFs, and illustrative preview examples remain outside this checkout.
+
+The shelf uses upright, uncovered papers. A lightweight wheel controller (`assets/js/scroll.js`) adds a short ease-out to vertical page scrolling and horizontal gestures on the paper rail. Touch and keyboard scrolling remain native; code blocks, tables, nested widgets, zoom gestures, and reduced-motion preferences bypass damping.
+
+Horizontal paper browsing snaps to the nearest centered paper after scrolling settles, updating the note and URL. Clicks and arrow keys also center the chosen paper. End spacing lets the first/last covers center, and wheel/swipe selection replaces the URL instead of filling browser history.
+
+Held arrow navigation is paced to the cover transition and stops at the ends; releasing cancels automatic repeats. A short fixed position track shows the selected index in the full paper list, follows horizontal scroll progress, and hides for a single entry. It is separate from the centered cover.
+
+Home profile links are text-only, set in 13px type like the navigation. They use the muted system-theme color, with 18px between links and 24px above the row.

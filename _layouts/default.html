@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% if site.reading_preview %}<meta name="robots" content="noindex, nofollow">{% endif %}
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
@@ -11,18 +12,25 @@
   {% feed_meta %}
   <link id="site-favicon" rel="icon" href="{{ '/assets/favicon.svg' | relative_url }}?v=theme-sync" type="image/svg+xml">
   <script src="{{ '/assets/js/favicon.js' | relative_url }}?v=theme-sync" defer></script>
-  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}?v=benchmark-ranges">
+  <script src="{{ '/assets/js/scroll.js' | relative_url }}?v=damped-scroll" defer></script>
+  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}?v=minimal-profile-links">
+  {% if page.body_class == 'reading' %}
+  <link rel="stylesheet" href="{{ '/assets/css/reading.css' | relative_url }}?v=selected-reading-list">
+  <script src="{{ '/assets/js/reading.js' | relative_url }}?v=paced-paper-navigation" defer></script>
+  {% endif %}
   {% if page.body_class == 'home' %}
   <script src="{{ '/assets/js/home-life.js' | relative_url }}?v=system-theme" defer></script>
   {% endif %}
 </head>
 <body class="{{ page.body_class | default: 'page' }}">
+  {% if site.reading_preview %}<aside class="preview-notice">Local preview</aside>{% endif %}
   <header>
     <a class="title" href="{{ '/' | relative_url }}"><h1>{{ site.title }}</h1></a>
     <nav aria-label="Main navigation">
       <p>
         <a href="{{ '/' | relative_url }}"{% if page.body_class == 'home' %} aria-current="page"{% endif %}>Home</a>
         <a href="{{ '/blog/' | relative_url }}"{% if page.body_class == 'blog' or page.layout == 'post' %} aria-current="page"{% endif %}>Writing</a>
+        <a href="{{ '/reading/' | relative_url }}"{% if page.body_class == 'reading' %} aria-current="page"{% endif %}>Reading</a>
       </p>
     </nav>
   </header>

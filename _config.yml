@@ -11,11 +11,21 @@ highlighter: rouge
 permalink: /blog/:title/
 future: false
 show_drafts: false
+collections:
+  reading:
+    output: true
+    permalink: /reading/:name/
 plugins:
   - jekyll-seo-tag
   - jekyll-sitemap
   - jekyll-feed
 defaults:
+  - scope:
+      path: ""
+      type: reading
+    values:
+      layout: reading
+      body_class: reading
   - scope:
       path: ""
       type: posts
