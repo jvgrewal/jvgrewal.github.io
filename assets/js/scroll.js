@@ -85,6 +85,7 @@
   }, {passive: false});
 
   window.addEventListener('pointerdown', cancel, {passive: true});
+  window.addEventListener('reading:before-center', cancel);
   window.addEventListener('touchstart', cancel, {passive: true});
   window.addEventListener('click', cancel, {passive: true});
   window.addEventListener('keydown', event => {

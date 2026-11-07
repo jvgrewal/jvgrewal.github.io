@@ -12,11 +12,11 @@
   {% feed_meta %}
   <link id="site-favicon" rel="icon" href="{{ '/assets/favicon.svg' | relative_url }}?v=theme-sync" type="image/svg+xml">
   <script src="{{ '/assets/js/favicon.js' | relative_url }}?v=theme-sync" defer></script>
-  <script src="{{ '/assets/js/scroll.js' | relative_url }}?v=damped-scroll" defer></script>
+  <script src="{{ '/assets/js/scroll.js' | relative_url }}?v=edge-snap-handoff" defer></script>
   <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}?v=minimal-profile-links">
   {% if page.body_class == 'reading' %}
   <link rel="stylesheet" href="{{ '/assets/css/reading.css' | relative_url }}?v=selected-reading-list">
-  <script src="{{ '/assets/js/reading.js' | relative_url }}?v=paced-paper-navigation" defer></script>
+  <script src="{{ '/assets/js/reading.js' | relative_url }}?v=edge-snap-handoff" defer></script>
   {% endif %}
   {% if page.body_class == 'home' %}
   <script src="{{ '/assets/js/home-life.js' | relative_url }}?v=system-theme" defer></script>

@@ -61,6 +61,8 @@
 
   function center(link, smooth = true) {
     if (!shelf) return;
+    // Hand control from wheel easing to centering before either can write again.
+    shelf.dispatchEvent(new Event('reading:before-center', {bubbles: true}));
     const left = centerPosition(link);
     if (Math.abs(shelf.scrollLeft - left) > .75) {
       shelf.scrollTo({left, behavior: smooth && !motion.matches ? 'smooth' : 'instant'});
@@ -239,6 +241,9 @@
     shelf.addEventListener('wheel', event => {
       if (!event.ctrlKey && !event.metaKey && (event.shiftKey || Math.abs(event.deltaX) > Math.abs(event.deltaY))) {
         userScrolling = true;
+        // At the ends, wheel input can interrupt centering without producing a
+        // scroll event. Settle after the last input even if scrollLeft is clamped.
+        queueSnap();
       }
     }, {passive: true});
     shelf.addEventListener('scroll', queueSnap, {passive: true});
