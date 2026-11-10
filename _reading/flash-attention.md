@@ -21,13 +21,10 @@ Ergo, since standard attention can be memory-bound while these approximate metho
 On-chip SRAM is super fast but very small, so it is used for blocks that are currently being computed on. HBM is much larger but also slower, so it stores the full $$Q$$, $$K$$, and $$V$$ matrices along with the output.
 
 <figure>
-  <a href="/assets/flash-attention/memory-hierarchy-tiling.png" aria-label="Open the full FlashAttention figure">
-    <svg viewBox="105 70 780 440" width="780" height="440" role="img" aria-labelledby="flashattention-diagram-title" style="display: block; overflow: hidden;">
-      <title id="flashattention-diagram-title">GPU memory hierarchy and FlashAttention tiling: blocks of Q, K, and V move from HBM to SRAM, where attention is computed before the output is written to HBM.</title>
-      <image href="/assets/flash-attention/memory-hierarchy-tiling.png" width="1324" height="780" />
-    </svg>
+  <a href="/assets/flash-attention/figure-1.svg" aria-label="Open the full FlashAttention figure">
+    <img src="/assets/flash-attention/memory-hierarchy-tiling.svg" width="1152" height="648" alt="GPU memory hierarchy and FlashAttention tiling: blocks of Q, K, and V move from HBM to SRAM, where attention is computed before the output is written to HBM." style="display: block;">
   </a>
-  <figcaption>Memory hierarchy and tiling. Cropped from Figure 1 of <a href="https://arxiv.org/abs/2205.14135">FlashAttention, Dao et al. (2022)</a>.</figcaption>
+  <figcaption>Figure 1 from <a href="https://arxiv.org/abs/2205.14135">FlashAttention, Dao et al. (2022)</a>.</figcaption>
 </figure>
 
 Recall that:
