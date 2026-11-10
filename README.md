@@ -28,7 +28,7 @@ Your writing goes here.
 
 Use the actual publication date and Detroit UTC offset (`-0400` during daylight saving time, `-0500` otherwise). Commit and push to `main` when publication is intended. GitHub Pages builds and deploys the site automatically.
 
-Markdown supports tables, fenced code blocks, links, images, and footnotes. Use native HTML/MathML for equations when needed; adding a TeX renderer can be scoped to a future math-heavy post.
+Markdown supports tables, fenced code blocks, links, images, and footnotes. For LaTeX equations, set `math: true` in front matter. Use Kramdown's `$$...$$` delimiters inline, or put them on their own lines for display math. Add `{: .math-display}` immediately below a display equation to preserve its wrapper when the Reading shelf processes collection content. A locally hosted, pinned KaTeX renderer formats the equations. Reading loads it when any shelf note uses math, including notes initially hidden by the selection. Native HTML/MathML is also supported.
 
 ## Search and feeds
 
@@ -52,7 +52,7 @@ Start drafts outside the public checkout with `templates/reading-note.md`. Only 
 
 The first version has no inline cross-links between notes/posts, no Linked from section, and no Related papers section. Each note’s main title links directly to the original paper. The interface has no small numbered captions, author/year/category row, or separate source-link row. Revisit cross-links with Joshveer when working on a Reading note or paper-related Writing post.
 
-The initial shelf contains FlashAttention, Attention Is All You Need, and the original Vision Transformer paper. Their note bodies and descriptions are deliberately blank. Only the approved entries and first-page thumbnails are public; private drafts, original PDFs, and illustrative preview examples remain outside this checkout.
+The shelf contains FlashAttention, Attention Is All You Need, and the original Vision Transformer paper. FlashAttention has published notes; the other note bodies and all description fields remain blank. Only approved notes and first-page thumbnails are public; private drafts, original PDFs, and illustrative preview examples remain outside this checkout.
 
 The shelf uses upright, uncovered papers. A lightweight wheel controller (`assets/js/scroll.js`) adds a short ease-out to vertical page scrolling and horizontal gestures on the paper rail. Touch and keyboard scrolling remain native; code blocks, tables, nested widgets, zoom gestures, and reduced-motion preferences bypass damping.
 

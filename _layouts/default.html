@@ -18,6 +18,14 @@
   <link rel="stylesheet" href="{{ '/assets/css/reading.css' | relative_url }}?v=selected-reading-list">
   <script src="{{ '/assets/js/reading.js' | relative_url }}?v=edge-snap-handoff" defer></script>
   {% endif %}
+  {% assign math_notes = site.reading | where: 'math', true %}
+  {% if page.math or page.body_class == 'reading' and math_notes.size > 0 %}
+  <link rel="stylesheet" href="{{ '/assets/vendor/katex-0.19.1/katex.min.css' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/assets/css/math.css' | relative_url }}">
+  <script src="{{ '/assets/vendor/katex-0.19.1/katex.min.js' | relative_url }}" defer></script>
+  <script src="{{ '/assets/vendor/katex-0.19.1/contrib/auto-render.min.js' | relative_url }}" defer></script>
+  <script src="{{ '/assets/js/math.js' | relative_url }}" defer></script>
+  {% endif %}
   {% if page.body_class == 'home' %}
   <script src="{{ '/assets/js/home-life.js' | relative_url }}?v=system-theme" defer></script>
   {% endif %}
