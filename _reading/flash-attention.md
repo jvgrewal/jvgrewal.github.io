@@ -52,6 +52,8 @@ FlashAttention enables faster model training, better models through longer-conte
 
 FlashAttention computes exact dense attention, while block-sparse FlashAttention is reported to be 2–4× faster than dense FlashAttention by using approximation in the paper’s evaluated settings.
 
-- In the paper’s implementation, each new attention variant needs a handwritten CUDA kernel along with specific tuning across GPU architectures.
-- A similar transformation can be applied to layers other than attention that move data to/from HBM.
-- Splitting attention across GPUs requires minimizing data transfers between GPUs.
+**Limitations:**
+
+1. Each new attention variant needs a handwritten CUDA kernel along with specific tuning across GPU architectures.
+2. A similar transformation can be applied to layers other than attention that move data to/from HBM.
+3. Splitting attention across GPUs requires minimizing data transfers between GPUs.
