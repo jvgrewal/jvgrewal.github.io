@@ -57,9 +57,9 @@ These challenges are addressed by tiling and recomputation:
 
 Theoretically, no other exact attention algorithm can asymptotically improve on FlashAttention’s HBM-access complexity across every SRAM size in the analyzed range, as every exact algo must at least read its inputs and write its output. When the SRAM is large enough, FlashAttention’s memory traffic already matches that minimum up to constant factors.
 
-FlashAttention enables faster model training, better models through longer-context training, and improved performance on attention benchmarks in its evaluated settings.
+FlashAttention enables faster model training, better models through longer-context training, and improved performance on attention benchmarks.
 
-FlashAttention computes exact dense attention, while block-sparse FlashAttention is reported to be 2–4× faster than dense FlashAttention by using approximation in the paper’s evaluated settings.
+FlashAttention computes exact dense attention, while block-sparse FlashAttention is reported to be 2–4× faster than dense FlashAttention by using approximation.
 
 **Limitations:**
 
