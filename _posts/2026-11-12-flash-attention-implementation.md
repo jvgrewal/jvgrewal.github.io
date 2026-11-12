@@ -102,14 +102,14 @@ In this function, Q is one query vector. By iterating through blocks of keys and
 I extend this method to multiple query rows in blockwiseattention.py. For a block with B query rows, m and l each have shape (B, 1), and u has shape (B, d). Each query therefore keeps its own running statistics:
 
 ```python
-            blockMax = scores.max(dim=1, keepdim=True).values # finds one max per row
-            m_new = torch.maximum(m, blockMax)
-            alpha = torch.exp(m - m_new)
-            weights = torch.exp(scores - m_new)
+blockMax = scores.max(dim=1, keepdim=True).values # finds one max per row
+m_new = torch.maximum(m, blockMax)
+alpha = torch.exp(m - m_new)
+weights = torch.exp(scores - m_new)
 
-            l = alpha * l + weights.sum(dim=1, keepdim=True)
-            u = alpha * u + weights @ VBlock
-            m = m_new
+l = alpha * l + weights.sum(dim=1, keepdim=True)
+u = alpha * u + weights @ VBlock
+m = m_new
 ```
 
 For each query block, I iterate through the key/value blocks and accumulate its output. After the inner loop, I save u/l to the corresponding rows of O and return O once all query blocks are finished. Using dim=1 gives a separate maximum and sum across the keys for each query and keepdim=True keeps the shapes compatible with row-by-row rescaling.
@@ -117,11 +117,11 @@ For each query block, I iterate through the key/value blocks and accumulate its 
 Another addition is causal masking, which prevents a query from attending to future keys during next-token prediction. This produces the lower-triangular matrix of allowed interactions. Before the softmax updates, I compare the query and key positions in the full sequence:
 
 ```python
-            if causal:
-                queryPositions = torch.arange(QStart, QStart + rows, device=Q.device).unsqueeze(1) # column
-                keyPositions = torch.arange(KStart, KStart + KBlock.shape[0], device=K.device).unsqueeze(0) # row
-                mask = keyPositions > queryPositions # creates a table of T/F values where each entry contains logical expression whether curr key is after curr query
-                scores = scores.masked_fill(mask, float("-inf"))
+if causal:
+    queryPositions = torch.arange(QStart, QStart + rows, device=Q.device).unsqueeze(1) # column
+    keyPositions = torch.arange(KStart, KStart + KBlock.shape[0], device=K.device).unsqueeze(0) # row
+    mask = keyPositions > queryPositions # creates a table of T/F values where each entry contains logical expression whether curr key is after curr query
+    scores = scores.masked_fill(mask, float("-inf"))
 ```
 
 The masked scores contribute zero after exponentiation. I also stop the key-block loop when KStart >= QStart + rows, because that block and every later block are entirely in the future for the current query block. This Python version checks the blockwise math.
@@ -148,10 +148,10 @@ kernel void attentionforward(device const float* Q, device const float* K, devic
 The rest of attention.metal mostly translates the one-query PyTorch code into MSL, including causal masking and the weighted-value updates. Metal accesses the tensors as flat arrays, so Q[query * D + c] corresponds to Q[query, c]. The dot product is a loop over matching features:
 
 ```cpp
-    float score = 0.0f;
+float score = 0.0f;
 
-    for (uint c = 0; c < D; ++c) score += Q[query * D + c] * K[key * D + c]; // equivalent to Q @ K
-    score /= sqrt(float(D));
+for (uint c = 0; c < D; ++c) score += Q[query * D + c] * K[key * D + c]; // equivalent to Q @ K
+score /= sqrt(float(D));
 ```
 
 Unlike the Python function, this version processes one key at a time, so weight is a scalar. Each thread keeps its own m, l, and u. If causal masking is enabled, its key loop stops at query + 1. This fuses the forward computation, but different query threads still independently read the same K and V values.
@@ -163,13 +163,13 @@ Although that translation was pretty straightforward, the shared-memory version 
 All threads within a threadgroup cooperate to load the same K/V tile, then reuse it while computing attention for their respective queries. Each thread loads a different subset of the tile’s elements. Even extra threads that do not have a valid query help load the current tile:
 
 ```cpp
-    for (uint i = lane; i < TILE * D; i += THREADS) { // all threads in threadgroup load the same K/V tile to compute attention for its own query
-      uint key = start + i/D;
-      uint c = i % D;
-      KTile[i] = key < N ? K[key * D + c] : 0.0f;
-      VTile[i] = key < N ? V[key * D + c] : 0.0f;
-    }
-    threadgroup_barrier(mem_flags::mem_threadgroup); // synchronization to prevent RAW
+for (uint i = lane; i < TILE * D; i += THREADS) { // all threads in threadgroup load the same K/V tile to compute attention for its own query
+  uint key = start + i/D;
+  uint c = i % D;
+  KTile[i] = key < N ? K[key * D + c] : 0.0f;
+  VTile[i] = key < N ? V[key * D + c] : 0.0f;
+}
+threadgroup_barrier(mem_flags::mem_threadgroup); // synchronization to prevent RAW
 ```
 
 Here, lane is the thread’s index within the group. With 32 threads, lane 0 loads elements 0, 32, 64, and so on, while lane 1 loads elements 1, 33, 65, and so on. Once the tile is loaded, each valid query thread processes its keys and updates its private m, l, and u. The Python wrapper rounds up to a full group of 32 threads and the query < N check prevents extra threads from writing an output.
