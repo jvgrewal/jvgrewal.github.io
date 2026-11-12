@@ -50,9 +50,9 @@ The site follows the device’s `prefers-color-scheme` setting, with white paper
 
 Start drafts outside the public checkout with `templates/reading-note.md`. Only move an approved note and its public thumbnail into `_reading/` and `assets/<paper-slug>/` when publication is authorized.
 
-The first version has no inline cross-links between notes/posts, no Linked from section, and no Related papers section. Each note’s main title links directly to the original paper. The interface has no small numbered captions, author/year/category row, or separate source-link row. Revisit cross-links with Joshveer when working on a Reading note or paper-related Writing post.
+The FlashAttention Reading note and Writing implementation post have reciprocal Related links at the bottom. The Writing introduction also links to the Reading summary. Each note’s main title links directly to the original paper. The shelf has no small numbered captions, author/year/category row, or separate source-link row.
 
-The shelf contains FlashAttention, Attention Is All You Need, and the original Vision Transformer paper. FlashAttention has published notes; the other note bodies and all description fields remain blank. Only approved notes and first-page thumbnails are public; private drafts, original PDFs, and illustrative preview examples remain outside this checkout.
+The shelf contains FlashAttention, Attention Is All You Need, and the original Vision Transformer paper. FlashAttention has published notes and a short SEO description; the other note bodies and descriptions remain blank. Only approved notes and public assets are included; private drafts, original PDFs, and illustrative preview examples remain outside this checkout.
 
 The shelf uses upright, uncovered papers. A lightweight wheel controller (`assets/js/scroll.js`) adds a short ease-out to vertical page scrolling and horizontal gestures on the paper rail. Touch and keyboard scrolling remain native; code blocks, tables, nested widgets, zoom gestures, and reduced-motion preferences bypass damping.
 

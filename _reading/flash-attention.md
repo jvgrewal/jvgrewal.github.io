@@ -2,12 +2,12 @@
 title: "FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness"
 paper_url: "https://arxiv.org/abs/2205.14135"
 thumbnail: "/assets/flash-attention/first-page.png"
-description: ""
+description: "Notes on how FlashAttention uses tiling and recomputation to reduce memory traffic."
 date: "2026-11-05"
 shelf_order: 1
 published: true
 math: true
-last_modified_at: "2026-11-10"
+last_modified_at: "2026-11-12"
 ---
 
 FlashAttention is IO-aware self-attention that accounts for the cost of reading/writing data and uses GPU tiling to make it more efficient.
@@ -66,3 +66,5 @@ FlashAttention computes exact dense attention, while block-sparse FlashAttention
 1. Each new attention variant needs a handwritten CUDA kernel along with specific tuning across GPU architectures.
 2. A similar transformation can be applied to layers other than attention that move data to/from HBM.
 3. Splitting attention across GPUs requires minimizing data transfers between GPUs.
+
+<p class="post-meta">Related: <a href="/blog/flash-attention-implementation/">Writing a FlashAttention kernel in Metal</a></p>
