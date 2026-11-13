@@ -6,8 +6,8 @@ description: Notes on linear algebra, probability, and machine learning basics f
   Deep Learning.
 date: '2026-11-12'
 shelf_order: 2
-thumbnail: /assets/deep-learning-book/title-page.png
-thumbnail_source: https://toc.uni.li/FLMF048329.pdf
+thumbnail: /assets/deep-learning-book/cover.jpg
+thumbnail_source: https://mitpress.mit.edu/9780262035613/deep-learning/
 published: true
 math: true
 ---
